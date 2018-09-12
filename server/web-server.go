@@ -2,9 +2,7 @@ package main
 
 import "log"
 import "net/http"
-//import "io/ioutil"
 import "github.com/gorilla/mux"
-//import "strings"
 import "gopkg.in/mgo.v2/bson"
 import "encoding/json"
 import "strconv"
@@ -79,19 +77,6 @@ func AddScore(score Score) bool {
 	}
 	return true
 }
-   
-// UpdateCounter updates an counter in the DB
-func UpdateCounter(counter Counter) bool {
-	session, err := mgo.Dial(SERVER)
-	defer session.Close()
-	session.DB(DBNAME).C(DOCCOUNTER).UpdateId(counter.NAME, counter)
-   
-   if err != nil {
-	 log.Fatal(err)
-	 return false
-	}
-	return true
-}
 
 func GetCounter() int32 {
 	var name = "counter"
@@ -139,24 +124,6 @@ func createScore(w http.ResponseWriter, r *http.Request) {
    	}
 	score.SCORE = int32(score2int)
     json.NewEncoder(w).Encode(score)
-	/*body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // read the body of the request
-	if err != nil {
-		log.Fatalln("Error AddScore", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if err := r.Body.Close(); err != nil {
-		log.Fatalln("Error AddScore", err)
-	}
-	
-	if err := json.Unmarshal(body, &score); err != nil { // unmarshall body contents as a type Candidate
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatalln("Error AddScore unmarshalling data", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	}*/
 	success := AddScore(score) // adds the album to the DB
 	if !success {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -166,7 +133,6 @@ func createScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	return
-	//fmt.Fprintln(w, "not implemented yet !")
 }
 
 
