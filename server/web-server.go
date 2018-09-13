@@ -11,29 +11,29 @@ import "fmt"
 import "math/rand"
 import "time"
 
-
 // Product represents an e-comm item
 type Word struct {
-	_IDMongo bson.ObjectId 	     `bson:"_id"`
-	NAME string        `json:"name"`
-	_ID int32        `json:"id"`
-	ANAGRAMS []string `json:"anagrams" bson:"anagrams"`
+	_IDMongo bson.ObjectId `bson:"_id"`
+	NAME     string        `json:"name"`
+	_ID      int32         `json:"id"`
+	ANAGRAMS []string      `json:"anagrams" bson:"anagrams"`
 }
+
 //Counter represents a database entries managers
-type Counter struct{
-	ID bson.ObjectId	`bson:"_id"`
-	NAME string `json:"name"`
-	SEQ int32       `json:"seq"`
+type Counter struct {
+	ID   bson.ObjectId `bson:"_id"`
+	NAME string        `json:"name"`
+	SEQ  int32         `json:"seq"`
 }
+
 //Score
-type Score struct{
-	ID bson.ObjectId	`bson:"_id"`
-	NAME string `json:"name"`
-	SCORE int32       `json:"seq"`
+type Score struct {
+	ID    bson.ObjectId `bson:"_id"`
+	NAME  string        `json:"name"`
+	SCORE int32         `json:"seq"`
 }
 
-var rank []Score
-
+type Rank []Score
 
 // SERVER the DB server
 const SERVER = "localhost:27017"
@@ -46,34 +46,32 @@ const DOCWORDS = "words"
 const DOCCOUNTER = "counter"
 const DOCSCORE = "score"
 
-
-
 //GetWord in DB
 func GetWord(id int32) Word {
 	session, err := mgo.Dial(SERVER)
 	if err != nil {
-	 fmt.Println("Failed to establish connection to Mongo server:", err)
+		fmt.Println("Failed to establish connection to Mongo server:", err)
 	}
 	defer session.Close()
 	c := session.DB(DBNAME).C(DOCWORDS)
 	results := Word{}
 	if err := c.Find(bson.M{"id": id}).One(&results); err != nil {
-	 fmt.Println("Failed to write results:", err)
+		fmt.Println("Failed to write results:", err)
 	}
-   return results
+	return results
 }
-   
+
 // AddScore inserts an Score in the DB
 func AddScore(score Score) bool {
 	session, err := mgo.Dial(SERVER)
 	defer session.Close()
-   
+
 	score.ID = bson.NewObjectId()
 	session.DB(DBNAME).C(DOCSCORE).Insert(score)
-   
-   if err != nil {
-	 log.Fatal(err)
-	 return false
+
+	if err != nil {
+		log.Fatal(err)
+		return false
 	}
 	return true
 }
@@ -82,19 +80,31 @@ func GetCounter() int32 {
 	var name = "counter"
 	session, err := mgo.Dial(SERVER)
 	if err != nil {
-	 fmt.Println("Failed to establish connection to Mongo server:", err)
+		fmt.Println("Failed to establish connection to Mongo server:", err)
 	}
 	defer session.Close()
 	c := session.DB(DBNAME).C(DOCCOUNTER)
 	results := Counter{}
 	if err := c.Find(bson.M{"name": name}).One(&results); err != nil {
-	 fmt.Println("Failed to write results:", err)
+		fmt.Println("Failed to write results:", err)
 	}
-   
-   return results.SEQ
+
+	return results.SEQ
 }
 
-
+func GetScores() Rank {
+	session, err := mgo.Dial(SERVER)
+	if err != nil {
+		fmt.Println("Failed to establish connection to Mongo server:", err)
+	}
+	defer session.Close()
+	c := session.DB(DBNAME).C(DOCSCORE)
+	results := Rank{}
+	if err := c.Find(nil).Sort("-score").Limit(10).All(&results); err != nil {
+		fmt.Println("Failed to write results:", err)
+	}
+	return results
+}
 
 func newGame(w http.ResponseWriter, r *http.Request) {
 	var id int32
@@ -111,19 +121,30 @@ func newGame(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func getRank(w http.ResponseWriter, r *http.Request) {
+	rank := GetScores() // list word
+	log.Println(rank)
+	data, _ := json.Marshal(rank)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
+	w.Write(data)
+	return
+}
+
 func createScore(w http.ResponseWriter, r *http.Request) {
 	var score Score
 	var score2int int
 	params := mux.Vars(r)
-    _ = json.NewDecoder(r.Body).Decode(&score)
+	_ = json.NewDecoder(r.Body).Decode(&score)
 	score.NAME = params["name"]
 	score2int, err := strconv.Atoi(params["score"])
 
-   	if err != nil {
-      	// handle error
-   	}
+	if err != nil {
+		// handle error
+	}
 	score.SCORE = int32(score2int)
-    json.NewEncoder(w).Encode(score)
+	json.NewEncoder(w).Encode(score)
 	success := AddScore(score) // adds the album to the DB
 	if !success {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -135,12 +156,11 @@ func createScore(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-
-
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	r := mux.NewRouter()
 	r.HandleFunc("/newgame", newGame).Methods("GET")
+	r.HandleFunc("/rank", getRank).Methods("GET")
 	r.HandleFunc("/newscore/{name}/{score}", createScore).Methods("POST")
 	if err := http.ListenAndServe(":3000", r); err != nil {
 		log.Fatal(err)
