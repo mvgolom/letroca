@@ -20,6 +20,7 @@ namespace Game
         string letters;
         List<string> words = new List<string>();
         int points;
+        int qtdWords = 5;
 
         public Logic(){
             init();
@@ -44,7 +45,7 @@ namespace Game
             Random rnd = new Random();
 
 
-            for(int i = 0; i < 5; i++){
+            for(int i = 0; i < qtdWords; i++){
                 int x = rnd.Next(anagrams.Count);
                 words.Add(anagrams[x]);
             }
@@ -63,10 +64,10 @@ namespace Game
                 // Redirect the output stream of the child process.
                 p.StartInfo.UseShellExecute = true;
                 p.StartInfo.RedirectStandardOutput = false;
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
+              //  p.StartInfo.CreateNoWindow = true;
+               // p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
                 p.StartInfo.FileName = "play ";
-                p.StartInfo.Arguments = "marshmello-alone.wav";
+                p.StartInfo.Arguments = " marshmello-alone.wav";
                 p.Start();
 
             }).Start();
@@ -144,7 +145,7 @@ namespace Game
 
                 if(guessWord.Equals("--")){// verifica se quer desistir
                     on = false;
-                    this.points = this.points - 15;
+                    this.points = this.points - 10;
                     break;
                 }
 
@@ -155,16 +156,15 @@ namespace Game
 
                 if(guessWord.Equals("??")){// pediu resposta embaralhada
                     Console.WriteLine(shuffleAnswer());   
-                    this.points = this.points - 7;
+                    this.points = this.points - 5;
                     continue;                 
                 }
 
-
-				foreach(String s in words){ // verifica se palavra existe
-                    string su = s.ToUpper();
+				for(int i = 0; i < words.Count; i++){ // verifica se palavra existe
+                    string su = words[i].ToUpper();
 					if(su.Equals(guessWord.ToUpper())){
 						flag = true;
-                        words.Remove(s);
+                        words.RemoveAt(i);
 					}
 				}
                              
