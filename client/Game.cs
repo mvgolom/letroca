@@ -220,9 +220,10 @@ namespace Game
 					this.score = this.score + 10;
 				}else{
 					Console.WriteLine("--> Erroooou. Palavra inexistente ou não cadastrada");
-                    Console.WriteLine("\nVocê pode rever as dicas inserindo \"?\" ");
-                    Console.WriteLine("Pedir as respostas embaralhadas inserindo \"??\"(perde 5 pontos) ");
-                    Console.WriteLine("Ou desistir do jogo inserindo \"--\"(perde mais pontos)");
+                    Console.WriteLine("\nVocê pode:");
+                    Console.WriteLine("- Rever as dicas digitando \"?\" ");
+                    Console.WriteLine("- Pedir as respostas embaralhadas digitando \"??\"(perde 5 pontos) ");
+                    Console.WriteLine("- Desistir do jogo digitando \"--\"(perde 10 pontos)");
 				}
 
             }
@@ -274,10 +275,9 @@ namespace Game
             //Converte a String do request em json
             words = Newtonsoft.Json.JsonConvert.DeserializeObject<Words>(responseFromServer);
             
-            }catch(Exception e){
-                Console.WriteLine("Erro ao iniciar!");
-                Console.WriteLine("Source :{0} " , e.Source);
-                Console.WriteLine("Message :{0} " , e.Message);
+            }catch{
+                Console.WriteLine("Erro ao iniciar. Verifique a conexão.");
+
             }
             return words;
 		}
@@ -308,9 +308,8 @@ namespace Game
             request = WebRequest.Create(link);
             
             
-            }catch(Exception e){
-                Console.WriteLine("Erro ao salvar");
-                Console.WriteLine("Message :{0} " , e.Message);
+            }catch{
+                Console.WriteLine("Erro ao salvar. Verifique a conexão");
                 return false;
             }
             return true;
