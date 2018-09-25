@@ -19,18 +19,58 @@ namespace Game
         Http http;
         string letters;
         List<string> words = new List<string>();
-        int points;
-        int qtdWords = 5;
+        int score;
+        string name;
+        int qtdWords = 2;
+        bool win = false;
 
         public Logic(){
+            playBackgroundSound();
+
+            Console.WriteLine("\n-#-#-#-#- LETROCA -#-#-#-#-");
+            Console.WriteLine("\n---- FASE 1 ----");
+            
             init();
             play();
+
+            if(win){
+                Console.WriteLine("\n---- FASE 2 ----");
+                qtdWords = 4;
+            }
+
+            init();
+            play();
+            if(win){
+                Console.WriteLine("\n---- FASE 3 ----");
+                qtdWords = 8;
+            }
+
+            init();
+            play();
+            if(win){
+                Console.WriteLine("\n---- FASE 4 - FINAL  ----");
+                qtdWords = 16;
+            }
+
+            if(win){
+                Console.WriteLine("\n\nPARABÉNS!! VOCÊ VENCEU!! XD \nFez "+this.score+" pontos.");
+                Console.Write("Digite o seu nome, campeão: ");
+                name  = Console.ReadLine();
+
+            }
+
+            http.saveScore(name, score);
+
+			Console.WriteLine("Pontos salvos");
+            Console.WriteLine("Obtendo o rank...");
+            try{
+                printRank(); 
+            }catch{
+        }
         }
 
         public void init(){
-            playBackgroundSound();
-
-            Console.WriteLine("----- LETROCA -----");
+            
             
             Console.WriteLine("\nbuscando palavras...");
             http = new Http();
@@ -50,7 +90,7 @@ namespace Game
                 words.Add(anagrams[x]);
             }
 
-            this.points = 0;
+            this.score = 0;
         }
 
         public void playBackgroundSound(){
@@ -145,7 +185,7 @@ namespace Game
 
                 if(guessWord.Equals("--")){// verifica se quer desistir
                     on = false;
-                    this.points = this.points - 10;
+                    this.score = this.score - 10;
                     break;
                 }
 
@@ -156,7 +196,7 @@ namespace Game
 
                 if(guessWord.Equals("??")){// pediu resposta embaralhada
                     Console.WriteLine(shuffleAnswer());   
-                    this.points = this.points - 5;
+                    this.score = this.score - 5;
                     continue;                 
                 }
 
@@ -169,34 +209,27 @@ namespace Game
 				}
                              
 				if(flag){// verifica se acertou
-					Console.Write("--> ACERTOU");
-					this.points = this.points + 10;
+					Console.WriteLine("--> ACERTOU");
+					this.score = this.score + 10;
 				}else{
-					Console.Write("--> Erroooou. Palavra inexistente ou não cadastrada");
-                    Console.WriteLine("\n(vc pode pedir dicas inserindo \"?\", pedir as respostas embaralhadas inserindo \"??\"(perde ponto) ou desistir do jogo inserindo \"--\"(perde mais pontos))");
+					Console.WriteLine("--> Erroooou. Palavra inexistente ou não cadastrada");
+                    Console.WriteLine("\nVocê pode rever as dicas inserindo \"?\" ");
+                    Console.WriteLine("Pedir as respostas embaralhadas inserindo \"??\"(perde 5 pontos) ");
+                    Console.WriteLine("Ou desistir do jogo inserindo \"--\"(perde mais pontos)");
 				}
 
             }
             string name ;
 
             if(on){// se não desistiu
-                Console.WriteLine("\n\nVOCÊ VENCEU!! Fez "+this.points+" pontos.");
-			    Console.Write("Digite o seu nome, campeão: ");
-                name  = Console.ReadLine();
+                Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
+                win = true;
             }else{
-                Console.WriteLine("\n\nVOCÊ DESISTIU!! \n Mas ainda fez "+this.points+" pontos.");
-			    Console.Write("Digita logo esse nome, vai: ");
+                Console.WriteLine("\n\nVOCÊ DESISTIU :( \n Mas ainda fez "+this.score+" pontos :)");
+			    Console.Write("Digite seu nome: ");
                 name = Console.ReadLine();
+                win = false;
             }
-			
-
-            http.saveScore(name, points);
-
-			Console.WriteLine("Pontos salvos");
-            Console.WriteLine("Obtendo o rank...");
-            try{
-                printRank(); 
-            }catch{
 
             }
 
@@ -290,4 +323,3 @@ namespace Game
         }
 
 	}
-}
