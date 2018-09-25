@@ -719,23 +719,23 @@
     ]
   },
   "packageFolders": {
-    "/home/golom/.nuget/packages/": {},
+    "/home/jennifer/.nuget/packages/": {},
     "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/golom/Documentos/LP/projeto1/letroca/client/client.csproj",
+      "projectUniqueName": "/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/client.csproj",
       "projectName": "client",
-      "projectPath": "/home/golom/Documentos/LP/projeto1/letroca/client/client.csproj",
-      "packagesPath": "/home/golom/.nuget/packages/",
-      "outputPath": "/home/golom/Documentos/LP/projeto1/letroca/client/obj/",
+      "projectPath": "/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/client.csproj",
+      "packagesPath": "/home/jennifer/.nuget/packages/",
+      "outputPath": "/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/golom/.nuget/NuGet/NuGet.Config"
+        "/home/jennifer/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"

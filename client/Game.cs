@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Game
 {
@@ -15,11 +16,8 @@ namespace Game
     }
 	class Logic
 	{
-        //private char[] letters =  { 'O', 'R', 'T', 'O', 'S' };
-        //private String[] words  = { "ROTO", "TORO", "ROSTO", "TOROS" };
-        //private int qtt;
         Http http;
-        char[] letters;
+        string letters;
         List<string> words = new List<string>();
         int points;
 
@@ -29,16 +27,17 @@ namespace Game
         }
 
         public void init(){
+            playBackgroundSound();
 
+            Console.WriteLine("----- LETROCA -----");
+            
+            Console.WriteLine("\nbuscando palavras...");
             http = new Http();
 
             Words w = http.newGame();
 
             //letters
-            string word = w.Name;
-
-            letters = word.ToCharArray();
-    
+            letters = w.Name;
 
             //words
             List<string> anagrams = w.Anagrams;
@@ -50,33 +49,91 @@ namespace Game
                 words.Add(anagrams[x]);
             }
 
-
-
             this.points = 0;
         }
 
         public void playBackgroundSound(){
-            // Start the child process.
-            Process p = new Process();
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "play";
-            p.StartInfo.Arguments = "marshmello-alone.wav";
-            p.Start();
+            new Thread(() => 
+            {
+                Thread.CurrentThread.IsBackground = true; 
+                /* run your code here */ 
+                
+                // Start the child process.
+                Process p = new Process();
+                // Redirect the output stream of the child process.
+                p.StartInfo.UseShellExecute = true;
+                p.StartInfo.RedirectStandardOutput = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
+                p.StartInfo.FileName = "play ";
+                p.StartInfo.Arguments = "marshmello-alone.wav";
+                p.Start();
+
+            }).Start();
+
+            
+        }
+
+        public string tips(){
+            // 3 palavras de 2 letras. Iniciais: A, E, R,
+            // 4 palavras de 3 letras. Iniciais: L, A, I, R,
+            // 2 palavras de 4 letras. Iniciais: E, I,
+            string dica = "\n\nDicas\n";
+            for(int i = 2; i <= letters.Length; i++){
+                int countWords = 0;
+                string iniciais = "";
+                foreach(string s in words){
+                   if(s.Length == i){
+                        countWords += 1;
+                        iniciais += s.Substring(0,1) + ", ";
+                   }
+                }
+                if(countWords > 0){
+                    dica += countWords+" palavras de "+i+" letras. Iniciais: "+iniciais.ToUpper()+"\n";
+                }
+            }
+
+            return dica;
+        }
+        public string ScrambleWord(string word) 
+        { 
+            char[] chars = new char[word.Length]; 
+            Random rand = new Random(10000); 
+            int index = 0; 
+            while (word.Length > 0) 
+            { // Get a random number between 0 and the length of the word. 
+                int next = rand.Next(0, word.Length - 1); // Take the character from the random position 
+                                                        //and add to our char array. 
+                chars[index] = word[next];                // Remove the character from the word. 
+                word = word.Substring(0, next) + word.Substring(next + 1); 
+                ++index; 
+            } 
+            return new String(chars); 
+        }  
+
+        public string shuffleAnswer(){
+            string r = "\n\nRespostas Embaralhadas\n";
+            foreach(string str in words){
+                r += ScrambleWord(str)+"\n";
+            }
+            return r;
+        }
+
+        public void printRank(){
+            Rank r = http.getRank();
+            List<string> n = r.Name;
+            List<int> p = r.points;
+            for(int i = 0; i < n.Count; i++){
+                Console.WriteLine(n[i]+": "+p[i]+" pts");
+            }
         }
 
 		public void play()
-		{
+		{                    
+			Console.Write("\nLetras: ");
 
-            playBackgroundSound();
-                    
-			Console.WriteLine("LETROCA");
-			Console.Write("Letras: ");
-
-			foreach (char l in letters){//imprime as letras
-                Console.Write(l + " ");
-            }
+			Console.WriteLine(ScrambleWord(letters).ToUpper());
+            Console.WriteLine(tips()); 
 
             Boolean on = true; // false = desistiu do jogo
 
@@ -87,12 +144,25 @@ namespace Game
 
                 if(guessWord.Equals("--")){// verifica se quer desistir
                     on = false;
-                    this.points = this.points - 10;
+                    this.points = this.points - 15;
                     break;
                 }
 
+                if(guessWord.Equals("?")){// pediu dica
+                    Console.WriteLine(tips());   
+                    continue;                 
+                }
+
+                if(guessWord.Equals("??")){// pediu resposta embaralhada
+                    Console.WriteLine(shuffleAnswer());   
+                    this.points = this.points - 7;
+                    continue;                 
+                }
+
+
 				foreach(String s in words){ // verifica se palavra existe
-					if(s.Equals(guessWord.ToUpper())){
+                    string su = s.ToUpper();
+					if(su.Equals(guessWord.ToUpper())){
 						flag = true;
                         words.Remove(s);
 					}
@@ -103,10 +173,8 @@ namespace Game
 					this.points = this.points + 10;
 				}else{
 					Console.Write("--> Erroooou. Palavra inexistente ou não cadastrada");
-                    Console.WriteLine("\n(vc pode desistir do jogo a qualquer momento inserindo \"--\" sem as aspas)");
+                    Console.WriteLine("\n(vc pode pedir dicas inserindo \"?\", pedir as respostas embaralhadas inserindo \"??\"(perde ponto) ou desistir do jogo inserindo \"--\"(perde mais pontos))");
 				}
-
-				
 
             }
             string name ;
@@ -120,17 +188,17 @@ namespace Game
 			    Console.Write("Digita logo esse nome, vai: ");
                 name = Console.ReadLine();
             }
-
-            
 			
 
             http.saveScore(name, points);
 
 			Console.WriteLine("Pontos salvos");
+            Console.WriteLine("Obtendo o rank...");
+            try{
+                printRank(); 
+            }catch{
 
-            Rank r = http.getRank();
-            Console.WriteLine(r);
-
+            }
 
         }
 
@@ -156,7 +224,7 @@ namespace Game
          Rank rank;
 		public Words newGame(){
             try{
-            request = WebRequest.Create("http://localhost:3000/newgame");
+            request = WebRequest.Create("https://guarded-reaches-35788.herokuapp.com/newgame");
             response = request.GetResponse();
             dataStream = response.GetResponseStream(); 
             reader = new StreamReader(dataStream);  
@@ -176,7 +244,7 @@ namespace Game
 
         public Rank getRank(){
             try{
-            request = WebRequest.Create("http://localhost:3000/rank");
+            request = WebRequest.Create("https://guarded-reaches-35788.herokuapp.com/rank");
             response = request.GetResponse();
             dataStream = response.GetResponseStream(); 
             reader = new StreamReader(dataStream);  
@@ -188,15 +256,14 @@ namespace Game
             
             
             
-            }catch(Exception e){
+            }catch{
                 Console.WriteLine("Erro ao obter o rank!");
-                Console.WriteLine("Message :{0} " , e.Message);
             }
             return rank;
         }
 
         public bool saveScore(String name, int score){
-            String link = "http://localhost:3000/newscore/"+name+"/"+score;
+            String link = "https://guarded-reaches-35788.herokuapp.com/newscore/"+name+"/"+score;
             try{
             request = WebRequest.Create(link);
             

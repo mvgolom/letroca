@@ -9,3 +9,14 @@
 /home/golom/Documentos/LP/projeto1/letroca/client/bin/Debug/netcoreapp2.1/client.pdb
 /home/golom/Documentos/LP/projeto1/letroca/client/obj/Debug/netcoreapp2.1/client.dll
 /home/golom/Documentos/LP/projeto1/letroca/client/obj/Debug/netcoreapp2.1/client.pdb
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/bin/Debug/netcoreapp2.1/client.deps.json
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/bin/Debug/netcoreapp2.1/client.runtimeconfig.json
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/bin/Debug/netcoreapp2.1/client.runtimeconfig.dev.json
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/bin/Debug/netcoreapp2.1/client.dll
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/bin/Debug/netcoreapp2.1/client.pdb
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.csprojAssemblyReference.cache
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.csproj.CoreCompileInputs.cache
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.AssemblyInfoInputs.cache
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.AssemblyInfo.cs
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.dll
+/home/jennifer/Documents/UTFPR/2018-2/LP/letroca/client/obj/Debug/netcoreapp2.1/client.pdb
