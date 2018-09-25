@@ -34,22 +34,29 @@ namespace Game
             play();
 
             if(win){
+                Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
                 Console.WriteLine("\n---- FASE 2 ----");
                 qtdWords = 4;
+                init();
+                play();
             }
 
-            init();
-            play();
+            
             if(win){
+                Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
                 Console.WriteLine("\n---- FASE 3 ----");
                 qtdWords = 8;
+                init();
+                play();
             }
 
-            init();
-            play();
+            
             if(win){
-                Console.WriteLine("\n---- FASE 4 - FINAL  ----");
+                Console.WriteLine("\nPASSOU PARA A ÚLTIMA FASE");
+                Console.WriteLine("\n---- FASE FINAL  ----");
                 qtdWords = 16;
+                init();
+                play();
             }
 
             if(win){
@@ -106,8 +113,8 @@ namespace Game
                 p.StartInfo.RedirectStandardOutput = false;
               //  p.StartInfo.CreateNoWindow = true;
                // p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
-                p.StartInfo.FileName = "play ";
-                p.StartInfo.Arguments = " marshmello-alone.wav";
+                p.StartInfo.FileName = " ";
+                p.StartInfo.Arguments = "play marshmello-alone.wav";
                 p.Start();
 
             }).Start();
@@ -222,7 +229,7 @@ namespace Game
             string name ;
 
             if(on){// se não desistiu
-                Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
+                this.score = this.score + 15;
                 win = true;
             }else{
                 Console.WriteLine("\n\nVOCÊ DESISTIU :( \n Mas ainda fez "+this.score+" pontos :)");
