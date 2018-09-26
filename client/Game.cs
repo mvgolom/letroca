@@ -23,6 +23,8 @@ namespace Game
         string name;
         int qtdWords = 2;
         bool win = false;
+        int level = 1;
+        Process p;
 
         public Logic(){
             playBackgroundSound();
@@ -37,6 +39,7 @@ namespace Game
                 Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
                 Console.WriteLine("\n---- FASE 2 ----");
                 qtdWords = 4;
+                level = 2;
                 init();
                 play();
             }
@@ -46,6 +49,7 @@ namespace Game
                 Console.WriteLine("\nPASSOU PARA A PRÓXIMA FASE");
                 Console.WriteLine("\n---- FASE 3 ----");
                 qtdWords = 8;
+                level = 3;
                 init();
                 play();
             }
@@ -55,6 +59,7 @@ namespace Game
                 Console.WriteLine("\nPASSOU PARA A ÚLTIMA FASE");
                 Console.WriteLine("\n---- FASE FINAL  ----");
                 qtdWords = 16;
+                level = 4;
                 init();
                 play();
             }
@@ -70,10 +75,7 @@ namespace Game
 
 			Console.WriteLine("Pontos salvos");
             Console.WriteLine("Obtendo o rank...");
-            try{
-                printRank(); 
-            }catch{
-        }
+            Score r = http.getRank();
         }
 
         public void init(){
@@ -101,26 +103,29 @@ namespace Game
         }
 
         public void playBackgroundSound(){
-            new Thread(() => 
-            {
-                Thread.CurrentThread.IsBackground = true; 
-                /* run your code here */ 
-                
-                // Start the child process.
-                Process p = new Process();
-                // Redirect the output stream of the child process.
-                p.StartInfo.UseShellExecute = true;
-                p.StartInfo.RedirectStandardOutput = false;
-              //  p.StartInfo.CreateNoWindow = true;
-               // p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
-                p.StartInfo.FileName = " ";
-                p.StartInfo.Arguments = "play marshmello-alone.wav";
-                p.Start();
-
-            }).Start();
-
+             
+            // Start the child process.
+            p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = false;
+            p.StartInfo.FileName = "./play.sh";
+            //p.StartInfo.Arguments = " marshmello-alone.wav";
+            p.Start();
             
         }
+        public void playSounds(){
+
+                     
+            // Start the child process.
+            p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = false;
+            p.StartInfo.FileName = "./play.sh";
+            //p.StartInfo.Arguments = " marshmello-alone.wav";
+            p.Start();
+            
+        }
+        
 
         public string tips(){
             // 3 palavras de 2 letras. Iniciais: A, E, R,
@@ -167,15 +172,7 @@ namespace Game
             return r;
         }
 
-        public void printRank(){
-            Rank r = http.getRank();
-            List<string> n = r.Name;
-            List<int> p = r.points;
-            for(int i = 0; i < n.Count; i++){
-                Console.WriteLine(n[i]+": "+p[i]+" pts");
-            }
-        }
-
+        
 		public void play()
 		{                    
 			Console.Write("\nLetras: ");
@@ -250,9 +247,10 @@ namespace Game
         public string Name { get; set; }
         public List<string> Anagrams { get; set; }
     }
-    public class Rank{	//Modelo do Json de rank 
-        public List<string> Name { get; set; }
-        public List<int> points { get; set; }
+    public class Score{	//Modelo do Json de rank 
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public int Seq { get; set; }
     }
 
 	class Http
@@ -262,7 +260,7 @@ namespace Game
          WebResponse response;
          WebRequest request;
          Words words;
-         Rank rank;
+         Score rank;
 		public Words newGame(){
             try{
             request = WebRequest.Create("https://guarded-reaches-35788.herokuapp.com/newgame");
@@ -282,7 +280,7 @@ namespace Game
             return words;
 		}
 
-        public Rank getRank(){
+        public Score getRank(){
             try{
             request = WebRequest.Create("https://guarded-reaches-35788.herokuapp.com/rank");
             response = request.GetResponse();
@@ -292,12 +290,15 @@ namespace Game
             string responseFromServer = reader.ReadToEnd();
 
             //Converte a String do request em json
-            rank = Newtonsoft.Json.JsonConvert.DeserializeObject<Rank>(responseFromServer);
+            List<Score> rank = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Score>>(responseFromServer);
             
+            foreach(Score s in rank){
+                Console.WriteLine(s.Name+": "+s.Seq);
+            }
             
-            
-            }catch{
+            }catch(Exception e){
                 Console.WriteLine("Erro ao obter o rank!");
+                Console.WriteLine(e);
             }
             return rank;
         }
