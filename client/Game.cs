@@ -304,10 +304,13 @@ namespace Game
         }
 
         public bool saveScore(String name, int score){
-            String link = "https://guarded-reaches-35788.herokuapp.com/newscore/"+name+"/"+score;
+            String link = "https://guarded-reaches-35788.herokuapp.com";
             try{
-            request = WebRequest.Create(link);
-            
+                var client = new RestClient(link);
+                var request = new RestRequest("newscore/"+name+"/"+score, Method.POST);
+                var response = client.Execute(request);
+                HttpStatusCode statusCode = response.StatusCode;
+                int numericStatusCode = (int)statusCode;
             
             }catch{
                 Console.WriteLine("Erro ao salvar. Verifique a conexão");
