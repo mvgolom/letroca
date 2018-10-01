@@ -30,4 +30,20 @@
     mongorestore --db projetolp extract_place_dump.zip/dump/projetolp
     ```
 
-# Client
+# Client C#
+* [Install Dotnet](https://www.microsoft.com/net/download/linux-package-manager/ubuntu16-04/sdk-current)
+    * [Dotnet Install Documentation](https://www.microsoft.com/net/download/linux-package-manager/ubuntu16-04/sdk-current)
+
+* [Run Client](https://docs.microsoft.com/pt-br/dotnet/core/tutorials/using-with-xplat-cli)
+    ```sh
+    dotnet run
+    ```
+## Dependencias
+* [Newtonsoft.Json](https://www.newtonsoft.com/json)
+    ```sh
+    dotnet add  package Newtonsoft.Json
+    ```
+* [RestSharp](http://restsharp.org/)
+    ```sh
+    dotnet add package RestSharp
+    ```
