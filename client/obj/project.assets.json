@@ -216,6 +216,15 @@
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
+      },
+      "RestSharp/106.4.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        }
       }
     }
   },
@@ -710,12 +719,27 @@
         "newtonsoft.json.11.0.2.nupkg.sha512",
         "newtonsoft.json.nuspec"
       ]
+    },
+    "RestSharp/106.4.2": {
+      "sha512": "anYHAsl6ERg0cpa0+EhvqC+2WU2Gr4bhpnjSCFWTnWcv1dYHv5v/yfwvfSAsNgXAqK4F7Hqq7Xj7oOIUKHrsLw==",
+      "type": "package",
+      "path": "restsharp/106.4.2",
+      "files": [
+        ".signature.p7s",
+        "lib/net452/RestSharp.dll",
+        "lib/net452/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.106.4.2.nupkg.sha512",
+        "restsharp.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
       "Microsoft.NETCore.App >= 2.1.0",
-      "Newtonsoft.Json >= 11.0.2"
+      "Newtonsoft.Json >= 11.0.2",
+      "RestSharp >= 106.4.2"
     ]
   },
   "packageFolders": {
@@ -765,6 +789,10 @@
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[11.0.2, )"
+          },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[106.4.2, )"
           }
         },
         "imports": [
