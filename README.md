@@ -47,3 +47,15 @@
     ```sh
     dotnet add package RestSharp
     ```
+* [soX](http://manpages.ubuntu.com/manpages/bionic/man1/sox.1.html)
+    ```sh
+    sudo apt-get install sox
+    ```
+* [soX mp3-lib](https://packages.debian.org/source/sid/sox)
+    ```sh
+    sudo apt-get install libsox-fmt-mp3
+    ```
+* [Xterm](https://invisible-island.net/xterm/)
+    ```sh
+    sudo apt install xterm
+    ```
